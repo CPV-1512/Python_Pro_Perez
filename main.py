@@ -1,39 +1,34 @@
-from flask import Flask, render_template, redirect
-import random
+# Import
+from flask import Flask, render_template,request, redirect
 
-app= Flask(__name__)
 
-@app.route("/")
-def Inicio():
-    return "<h1> Hola desde Python </h1>"
 
-@app.route("/saludo")
-def saludo():
-    return "<h1> Hola desde mi primera pagina web </h1>"
+app = Flask(__name__)
 
-@app.route("/saludo/<nombre>")
-def nombre(nombre):
-    return f"<h1> Hola {nombre} bienvenido! </h1>"
+# Página de contenidos en ejecución
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@app.route("/suma/<int:num1>/<int:num2>")
-def suma(num1, num2):
-    return f"<h1> La suma de {num1} + {num2} es {num1 + num2}</h1> "
 
-@app.route("/datos")
-def datos():
-    lista_datos =[
-        "Según un estudio realizado en 2018, más del 50 por ciento de las personas de entre 18 y 34 años se consideran dependientes de sus smartphones.",
-        "El estudio de la dependencia tecnológica es una de las áreas más relevantes de la investigación científica moderna"
+# Habilidades dinámicas
+@app.route('/', methods=['POST'])
+def process_form():
+    button_python = request.form.get('button_python')
+    button_discord = request.form.get('button_discord')
+    button_html = request.form.get('button_html')
+    button_db = request.form.get("button_db")
+    correo = request.form.get("email")
+    comentario = request.form.get("text")
 
-    ]
-    return f"<h1>{random.choice(lista_datos)}</h1>"
+    with open("comentarios.txt", "a") as f:
+        f.write(f"{correo} '\n' ")
+        f.write(f"{comentario} '\n' ")
+    mensaje = "Tu comentario ha sido enviado"
 
-@app.route("/moneda")
-def tirar_moneda():
-   numero= random.randint(1,2)
-   if numero == 1:
-       return "<h1> Cara </h1>"
-   else:
-       return "<h1> Sello </h1>"
+    return render_template('index.html', button_python=button_python, button_discord=button_discord
+                           , button_html=button_html, button_db=button_db, mensaje=mensaje )
+
     
-app.run(debug = True)
+if __name__ == "__main__":
+    app.run(debug=True)
